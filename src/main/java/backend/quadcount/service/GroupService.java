@@ -3,6 +3,7 @@ package backend.quadcount.service;
 
 import backend.quadcount.model.Group;
 import backend.quadcount.repository.GroupRepository;
+import backend.quadcount.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ public class GroupService {
 
     @Autowired
     private GroupRepository groupRepository;
+    private UserRepository userRepository;
 
     public List<Group> getAllGroups() {
         return groupRepository.findAll();

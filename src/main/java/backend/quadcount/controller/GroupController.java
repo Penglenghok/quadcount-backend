@@ -3,6 +3,7 @@ package backend.quadcount.controller;
 import backend.quadcount.model.Group;
 import backend.quadcount.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,27 +32,26 @@ public class GroupController {
     @GetMapping("/{id}")
     public ResponseEntity<Group> getGroupById(@PathVariable String id) {
         Optional<Group> group = groupService.getGroupById(id);
+
         return group.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping()
-    public Group createGroup(@RequestBody Group group) {
-        return groupService.createGroup(group);
-    }
+    public ResponseEntity<Group> createGroup(@RequestBody Group group) {
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Group> updateGroup(@PathVariable String id, @RequestBody Group groupDetails) {
-        try {
-            return ResponseEntity.ok(groupService.updateGroup(id, groupDetails));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        Group groupCreated = groupService.createGroup(group);
+        return new ResponseEntity<Group>(groupCreated, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGroup(@PathVariable String id) {
-        groupService.deleteGroup(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> deleteGroup(@PathVariable String id) {
+        try {
+            groupService.deleteGroup(id);
+            return new ResponseEntity<>("Group deleted successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+
+        }
     }
 
     @GetMapping("/user/{userId}")
